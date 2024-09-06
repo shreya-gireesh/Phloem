@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form method =POST enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+
+          <label for="formFile" class="form-label">Default file input example</label>
+        {{ form.file.label_tag }}
+        {{ form.file }}
+        </div>
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+</div>
+<div>
+    <h1>Uploaded Files</h1>
+    <ul>
+        {% for file in files %}
+            <li>
+                <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                (Uploaded at {{ file.uploaded_at }})
+            </li>
+        {% empty %}
+            <li>No files uploaded yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="table-responsive-xxl">
+                                        <table class="table table-bordered table-hover all-users">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Sr No</th>
+                                                    <th scope="col">File ID</th>
+                                                    <th scope="col">Student Name</th>
+                                                    <th scope="col">File Name</th>
+                                                    <th scope="col">Assign to Faculty</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for file in student_files %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ file.studentfile_id }}</td>
+                                                    <td>{{ file.student.first_name }} {{ file.student.last_name }}</td>
+                                                    <td>{{ file.assignment_file.name }}</td>
+                                                    <td>
+                                                        <form method="post" style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <input type="hidden"  name="file_id" value="{{ file.studentfile_id }}">
+                                                            <select name="teacher_id" class="form-select form-control">
+
+                                                                {% for teacher in teachers %}
+                                                                    <option value="{{ teacher.user_id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                    </td>
+                                                    <td>
+                                                    <button type="submit" class="btn btn-primary">Assign</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    </div>
+</body>
+</html>
