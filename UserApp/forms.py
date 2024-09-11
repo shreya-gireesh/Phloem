@@ -4,18 +4,12 @@ from UserApp.models import *
 
 
 # Choices for country codes
-COUNTRY_CODE_CHOICES = [
-    ('+1', 'USA/Canada (+1)'),
-    ('+44', 'UK (+44)'),
-    ('+91', 'India (+91)'),
-    # Add more country codes as needed
-]
 class SubmissionForm(forms.ModelForm):
     class Meta:
-        model = StudentFileModel
+        model = StudentUploadsModel
         fields = [
             'student',
-            'country_code',
+            'countrycode',
             'whatsapp_number',
             'university',
             'course',
@@ -24,6 +18,9 @@ class SubmissionForm(forms.ModelForm):
             'submission_date',
             'expected_delivery_date',
             'assignment_file',
+            'model_work',
+            'module_materials',
+            'instructions',
             'country_specific',
             'country_specific_name',
             'company_specific',
@@ -31,7 +28,7 @@ class SubmissionForm(forms.ModelForm):
         ]
         widgets = {
             'student': forms.Select(attrs={'class': 'form-select form-control'}),
-            'country_code': forms.Select(choices=COUNTRY_CODE_CHOICES, attrs={'class': 'form-select form-control'}),
+            'countrycode': forms.Select( attrs={'class': 'form-select form-control'}),
             'whatsapp_number': forms.TextInput(attrs={'class': 'form-control form-control-user', 'placeholder': 'Whatsapp Number'}),
             'university': forms.TextInput(attrs={'class': 'form-control form-control-user', 'placeholder': 'University'}),
             'course': forms.TextInput(attrs={'class': 'form-control form-control-user', 'placeholder': 'Course'}),
@@ -40,6 +37,9 @@ class SubmissionForm(forms.ModelForm):
             'submission_date': forms.DateInput(attrs={'class': 'form-control form-control-user', 'type': 'date'}),
             'expected_delivery_date': forms.DateInput(attrs={'class': 'form-control form-control-user', 'type': 'date'}),
             'assignment_file': forms.FileInput(attrs={'class': 'form-file'}),
+            'model_work': forms.FileInput(attrs={'class': 'form-file'}),
+            'module_materials': forms.FileInput(attrs={'class': 'form-file'}),
+            'instructions': forms.FileInput(attrs={'class': 'form-file'}),
             'country_specific_name': forms.TextInput(
                 attrs={'placeholder': 'Enter Country Specific Name', 'class': 'form-control form-control-user'}),
             'company_specific_name': forms.TextInput(
@@ -48,12 +48,12 @@ class SubmissionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SubmissionForm, self).__init__(*args, **kwargs)
-        self.fields['student'].queryset = UserModel.objects.filter(user_type__user_type='Student')
+        self.fields['student'].queryset = UsersModel.objects.filter(user_type__user_type='Student')
 
 
 class UserForm(forms.ModelForm):
     class Meta:
-        model = UserModel
+        model = UsersModel
         fields = ['first_name', 'last_name', 'mailid', 'password', 'user_type']
         widgets ={
             'first_name': forms.TextInput(
@@ -66,15 +66,3 @@ class UserForm(forms.ModelForm):
                 attrs={'class': 'form-control form-control-user', 'placeholder': 'Password'}),
             'user_type': forms.Select(attrs={'class': 'form-select form-control'})
         }
-    repeat_password = forms.CharField(
-            widget=forms.PasswordInput(
-                attrs={'class': 'form-control form-control-user', 'placeholder': 'Repeat Password'}))
-    def clean(self):
-        cleaned_data = super().clean()
-        password = self.cleaned_data.get("password")
-        repeat_password = self.cleaned_data.get("repeat_password")
-
-        if password != repeat_password:
-            raise forms.ValidationError("Passwords do not match")
-
-        return cleaned_data

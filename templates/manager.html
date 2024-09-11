@@ -118,29 +118,38 @@
             <!-- Nav Item - Pages Collapse Menu -->
             {% if user_type == 'Manager' %}
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'form' %}"  data-target="#collapseTwo"
+                <a class="nav-link collapsed" href="{% url 'allfiles' %}"  data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-file fa-cog"></i>
+                    <i class="fas fa-file-alt"></i>
                     <span>All File</span>
                 </a>
             </li>
             {% endif %}
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'form' %}"  data-target="#collapseTwo"
+                <a class="nav-link collapsed" href="{% url 'faculty_assign' %}"  data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-file fa-cog"></i>
+                    <i class="fas fa-chalkboard-teacher"></i>
                     <span>Assign Faculty</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{% url 'form' %}"  data-target="#collapseTwo"
+                <a class="nav-link collapsed" href="{% url 'allusers' %}"  data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-file fa-cog"></i>
+                    <i class="fas fa-users"></i>
                     <span>All Users</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{% url 'addusers' %}"  data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Add Users</span>
+                </a>
+            </li>
+
 
 
 
@@ -291,9 +300,9 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">Sr No</th>
-                                                <th scope="col">File ID</th>
-                                                <th scope="col">Student Name</th>
-                                                <th scope="col">File Name</th>
+                                                <th scope="col">University</th>
+                                                <th scope="col">Task</th>
+                                                <th scope="col">Delivery Date</th>
                                                 <th scope="col">Assign to Faculty</th>
                                                 <th scope="col">Action</th>
                                             </tr>
@@ -302,15 +311,22 @@
                                             {% for file in student_files %}
                                             <tr>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ file.studentfile_id }}</td>
-                                                <td>{{ file.student.first_name }} {{ file.student.last_name }}</td>
-                                                <td>{{ file.assignment_file.name }}</td>
+                                                <td>{{ file.university }}</td>
+                                                <td>
+                                                    {{ file.assignment_file.name }}
+                                                    {{ file.model_work.name }}
+                                                    {{ file.module_materials.name }}
+                                                    {{ file.instructions.name }}
+
+                                                </td>
+                                                <td>{{ file.expected_delivery_date }}</td>
+
                                                 <td>
                                                     <form method="post" style="display: inline;">
                                                         {% csrf_token %}
                                                         <input type="hidden"  name="file_id" value="{{ file.studentfile_id }}">
                                                         <select name="teacher_id" class="form-select form-control">
-
+                                                            <option>Select Faculty</option>
                                                             {% for teacher in teachers %}
                                                                 <option value="{{ teacher.user_id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
                                                             {% endfor %}

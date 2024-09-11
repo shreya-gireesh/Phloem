@@ -239,9 +239,33 @@
                                         <h4 class="h5 mb-0 text-gray-800">Student Uploaded Files</h4>
                                         <div class="card">
                                           <p>
-                                              <strong>File Name:</strong>
-                                              <a href="{{ files.student_file }}" target="_blank">Uploaded File</a>
+                                              <strong>Assignment:</strong>
+                                              <a href="{{ files.assignment }}" target="_blank">Uploaded File</a>
                                           </p>
+
+
+                                            <p>
+                                              <strong>Model Work:</strong>
+                                                {% if files.model_work %}
+                                              <a href="{{ files.model_work }}" target="_blank">Uploaded File</a><br/>
+                                              {% endif %}
+                                                </p>
+
+                                            <p>
+                                              <strong>Module Materials:</strong>
+                                                {% if files.module_materials %}
+                                              <a href="{{ files.module_materials }}" target="_blank">Uploaded File</a><br/>
+                                                {% endif %}
+                                            </p>
+
+
+                                            <p>
+                                              <strong>Instructions:</strong>
+                                                {% if files.instructions %}
+                                              <a href="{{ files.instructions }}" target="_blank">Uploaded File</a><br/>
+                                                {% endif %}
+                                          </p>
+
                                           <p><strong>Uploaded By:</strong>{{files.student_name}}</p>
                                         </div>
                                       </div>

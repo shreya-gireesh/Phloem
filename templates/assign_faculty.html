@@ -187,7 +187,7 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">Sr No</th>
-                                                <th scope="col">File ID</th>
+                                                <th scope="col">University</th>
                                                 <th scope="col">Student Name</th>
                                                 <th scope="col">Faculty Name</th>
                                                 <th scope="col">Delivery Date</th>
@@ -197,7 +197,7 @@
                                             {% for file in uploaded_files %}
                                             <tr>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ file.file_id }}</td>
+                                                <td>{{ file.university }}</td>
                                                 <td>{{ file.student_name }} </td>
                                                 <td>{{ file.faculty}}</td>
                                                 <td>{{ file.delivery_date }}</td>

@@ -33,6 +33,7 @@ urlpatterns = [
     path('faculty', views.faculty_home, name='faculty'),
     path('all_files', views.allfiles, name='allfiles'),
     path('all_users', views.all_users, name='allusers'),
+    path('add_users', views.add_users, name='addusers'),
     path('assign_faculty', views.faculty_assign, name='faculty_assign'),
     path('form', views.submissionform, name='form'),
 

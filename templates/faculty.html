@@ -259,7 +259,7 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Assignments</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Pending</h6>
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
@@ -271,8 +271,26 @@
                                         <h4 class="h5 mb-0 text-gray-800">Student Uploaded Files</h4>
                                         <div class="card">
                                           <p>
-                                              <strong>File Name:</strong>
-                                              <a href="{{ files.student_file }}" target="_blank">{{files.student_file}}</a>
+                                              <strong>Assignment Brief:</strong>
+                                              <a href="{{ files.assignment_file }}" download>Assignment Brief</a>
+                                          </p>
+                                            <p>
+                                              <strong>Model Work:</strong>
+                                                {% if files.model_work %}
+                                              <a href="{{ files.model_work }}" download>Model Work</a>
+                                                {% endif %}
+                                          </p>
+                                            <p>
+                                              <strong>Module Materials:</strong>
+                                                {% if files.module_materials %}
+                                              <a href="{{ files.module_materials }}" download>Module Materials</a>
+                                                {% endif %}
+                                          </p>
+                                            <p>
+                                              <strong>Specific Instruction:</strong>
+                                                {% if files.instruction %}
+                                              <a href="{{ files.instruction }}" download>Specific Instruction</a>
+                                                {% endif %}
                                           </p>
                                           <p><strong>Uploaded By:</strong>{{files.student_name}}</p>
                                           <p><strong>Delivery Date:</strong>{{files.delivery_date}} </p>

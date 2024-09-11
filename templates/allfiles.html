@@ -197,8 +197,26 @@
                                         <h2 class="h5 mb-0 text-gray-800">Student Uploaded Files</h2>
                                         <div class="card">
                                           <p>
-                                              <strong>File Name:</strong>
-                                              <a href="{{ files.student_file }}" download>Student Uploaded File</a>
+                                              <strong>Assignment Brief:</strong>
+                                              <a href="{{ files.assignment_file }}" download>Assignment Brief</a>
+                                          </p>
+                                            <p>
+                                              <strong>Model Work:</strong>
+                                                {% if files.model_work %}
+                                              <a href="{{ files.model_work }}" download>Model Work</a>
+                                                {% endif %}
+                                          </p>
+                                            <p>
+                                              <strong>Module Materials:</strong>
+                                                {% if files.module_materials %}
+                                              <a href="{{ files.module_materials }}" download>Module Materials</a>
+                                                {% endif %}
+                                          </p>
+                                            <p>
+                                              <strong>Specific Instruction:</strong>
+                                                {% if files.instruction %}
+                                              <a href="{{ files.instruction }}" download>Specific Instruction</a>
+                                                {% endif %}
                                           </p>
                                           <p><strong>Uploaded By:</strong>{{files.student_name}}</p>
                                           <p><strong>Delivery Date:</strong>{{files.delivery_date}} </p>
@@ -209,59 +227,128 @@
                                       <div class="column">
                                         <h2 class="h5 mb-0 text-gray-800">Faculty Upload Answers</h2>
                                         <div class="card">
-                                          {% if not files.faculty_answer_file %}
-                                            <p>Not uploaded yet</p>
-                                          {% else %}
-                                            <p>Answer Uploaded: <a href="{{ files.faculty_answer_file }}" download>Download Answer</a></p>
-                                            <span>{{ files.answer_uploadedtime }}</span>
+                                          {% if files.faculty_answer_file %}
+                                            <!-- Show the uploaded answer file with download option -->
+                                            <p><strong>Answer Uploaded:</strong> <a href="{{ files.faculty_answer_file }}" download>Download Answer</a></p>
+                                            {% if user_type == 'Manager' %}
+                                            <p><strong>Uploaded By:</strong> {{files.faculty_name}}</p>
+                                            {% endif %}
+                                            <p><strong>Uploaded On:</strong> {{ files.answer_uploadedtime }}</p>
 
                                             {% if user_type == 'Teacher' %}
-                                                <button id="edit-btn" class="btn btn-sm btn-secondary">Edit</button>
+                                                <button id="edit-btn-{{ files.assign_id }}" class="btn btn-sm btn-secondary">Edit</button>
+
+                                                <!-- File upload form for editing, hidden by default -->
+                                                <form id="edit-form-{{ files.assign_id }}" method="POST" enctype="multipart/form-data" style="display:none;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
+                                                    <input type="file" name="answer_file" class="form-control" required>
+                                                    <button type="submit" class="btn btn-primary mt-2">Upload New Answer</button>
+                                                </form>
+
+                                                <!-- Script to toggle the edit form -->
+                                                <script>
+                                                    document.getElementById('edit-btn-{{ files.assign_id }}').addEventListener('click', function() {
+                                                        var form = document.getElementById('edit-form-{{ files.assign_id }}');
+                                                        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+                                                    });
+                                                </script>
                                             {% endif %}
 
-                                            <!-- File upload form, shown only when edit is clicked -->
-                                            <form id="upload-form" method="POST" enctype="multipart/form-data" style="display:none;">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
-                                                <input type="file" name="answer_file" class="form-control" required>
-                                                <button type="submit" class="btn btn-primary mt-2">Upload Answer</button>
-                                            </form>
-
-                                            <!-- Script to show the upload form when edit is clicked -->
-                                            <script>
-                                                document.getElementById('edit-btn').addEventListener('click', function() {
-                                                    document.getElementById('upload-form').style.display = 'block';
-                                                });
-                                            </script>
-
-                                            <!-- Form with current status, enabled only for Manager -->
                                             <form method="POST">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
 
                                                 <label for="status">Current Status:</label>
-                                                <select name="status" id="status" class="form-control" {% if user_type != 'Manager' %}disabled{% endif %}>
+                                                <select name="status" id="status" class="form-control"
+                                                        {% if user_type != 'Manager' %}disabled{% endif %}>
                                                     <option value="Verifying" {% if files.status == 'Verifying' %}selected{% endif %}>Verifying</option>
                                                     <option value="Error" {% if files.status == 'Error' %}selected{% endif %}>Error</option>
                                                     <option value="Completed" {% if files.status == 'Completed' %}selected{% endif %}>Completed</option>
                                                 </select>
 
-                                                <!-- Only managers can submit the form -->
+                                                <!-- Only Managers can submit the form to update the status -->
                                                 {% if user_type == 'Manager' %}
                                                     <button type="submit" class="btn btn-primary mt-2">Update Status</button>
                                                 {% endif %}
                                             </form>
+
+                                            <!-- Form with current status, enabled only for Manager -->
+
+                                        {% else %}
+                                            <!-- If no faculty answer is uploaded yet -->
+                                            {% if user_type == 'Teacher' %}
+                                                <!-- Show the upload form if the user is a Teacher -->
+                                                <form method="POST" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
+                                                    <label for="answer_file">Upload Answer:</label>
+                                                    <input type="file" name="answer_file" required class="form-control">
+                                                    <button type="submit" class="btn btn-primary mt-2">Upload Answer</button>
+                                                </form>
+                                            {% else %}
+                                                <p>Answer not uploaded yet.</p>
+                                            {% endif %}
                                         {% endif %}
                                         </div>
                                       </div>
 
                                       <!-- Column 3: Manager Error Upload -->
                                       <div class="column">
-                                        <h2 class="h5 mb-0 text-gray-800">Error Files by Manager</h2>
+                                        <h2 class="h5 mb-0 text-gray-800">Plagarism Report</h2>
                                         <div class="card">
-                                        {% if files.manager_error_file %}
-                                            <!-- Error file exists, display download link for all users -->
-                                            <p>Error File: <a href="{{ files.manager_error_file }}" download>Download Error File</a></p>
+                                        {% if files.plagiarism_report or files.ai_report or files.proof_reading %}
+                                            <!-- If at least one file exists, display download links for the existing files -->
+
+                                            {% if files.plagiarism_report %}
+                                            <p><strong>Turnitin Plagiarism Report:</strong> <a href="{{ files.plagiarism_report.url }}" download>Download</a></p>
+                                            {% endif %}
+
+                                            {% if files.ai_report %}
+                                            <p><strong>Turnitin AI Report:</strong> <a href="{{ files.ai_report.url }}" download>Download</a></p>
+                                            {% endif %}
+
+                                            {% if files.proof_reading %}
+                                            <p><strong>Proof Reading Comments:</strong> <a href="{{ files.proof_reading.url }}" download>Download</a></p>
+                                            {% endif %}
+
+                                            {% if user_type == 'Manager' %}
+                                                <!-- Show the Edit button if the user is a Manager -->
+                                                <div class="d-flex justify-content-center align-items-center mt-3">
+                                                    <button class="btn btn-warning" id="edit-files-btn">Edit Files</button>
+                                                </div>
+                                            {% endif %}
+
+                                            <!-- Form to edit the files, hidden initially -->
+                                            <form method="POST" enctype="multipart/form-data" id="edit-files-form" style="display:none;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
+
+                                                <div class="row form-group">
+                                                    <div class="col-md-8">
+                                                        <label for="plagiarism_report">Plagiarism Report:</label>
+                                                        <input type="file" name="plagiarism_report">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row form-group">
+                                                    <div class="col-md-8">
+                                                        <label for="ai_report">AI Report:</label>
+                                                        <input type="file" name="ai_report">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row form-group">
+                                                    <div class="col-md-8">
+                                                        <label for="proof_reading">Proof Reading:</label>
+                                                        <input type="file" name="proof_reading">
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                </div>
+                                            </form>
                                         {% else %}
                                             <!-- No error file exists -->
                                             {% if user_type == 'Manager' %}
@@ -269,13 +356,34 @@
                                                 <form method="POST" enctype="multipart/form-data">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="assign_id" value="{{ files.assign_id }}">
-                                                    <label for="error_file">Upload Error File:</label>
-                                                    <input type="file" name="error_file" required>
-                                                    <button type="submit" class="btn btn-primary">Upload Error File</button>
+                                                    <div class="row form-group">
+                                                        <div class="col-md-8">
+                                                            <label for="plagiarism_report">Plagarism Report:</label>
+                                                            <input type="file" name="plagiarism_report" >
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row form-group">
+                                                        <div class="col-md-8">
+                                                            <label for="ai_report">AI Report:</label>
+                                                            <input type="file" name="ai_report" >
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row form-group">
+                                                        <div class="col-md-8">
+                                                            <label for="proof_reading">Proof Reading:</label>
+                                                            <input type="file" name="proof_reading" >
+                                                        </div>
+
+                                                    </div>
+                                                    <div class=" d-flex justify-content-center align-items-center">
+                                                            <button type="submit" class="btn btn-primary">Upload</button>
+                                                        </div>
                                                 </form>
                                             {% else %}
                                                 <!-- For non-managers, no message or form is displayed -->
-                                                <p>No error file uploaded yet.</p>
+                                                <p>No file uploaded yet.</p>
                                             {% endif %}
                                         {% endif %}
 
@@ -339,6 +447,17 @@
         </div>
     </div>
 
+    <script>
+    document.getElementById('edit-files-btn').addEventListener('click', function() {
+        // Toggle visibility of the edit form
+        var form = document.getElementById('edit-files-form');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    });
+</script>
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
